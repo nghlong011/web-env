@@ -1,11 +1,16 @@
-module.exports = {
+/** @type {import('tailwindcss').Config} */
+export default {
   content: [
-    "./resources/**/*.blade.php",
-    "./resources/**/*.js",
-    "./resources/**/*.vue",
+      "./resources/**/*.blade.php",
+      "./resources/**/*.js",
+      "./resources/**/*.vue",
   ],
   theme: {
-    extend: {},
+      extend: {
+          fontFamily: {
+              sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+          },
+      },
   },
   plugins: [],
-} 
+};
