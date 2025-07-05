@@ -115,6 +115,14 @@ class BannerController extends Controller
             Storage::delete('public' . $banner->img);
         }
         $banner->delete();
+        
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Banner đã được xóa thành công.'
+            ]);
+        }
+        
         return redirect()->route('admin.banners.index')
             ->with('success', 'Banner đã được xóa thành công.');
     }

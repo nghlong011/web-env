@@ -54,8 +54,8 @@
                         <form action="{{ route('admin.partners.destroy', $partner) }}" method="POST" class="inline">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="text-red-600 hover:text-red-900"
-                                onclick="return confirm('Bạn có chắc chắn muốn xóa đối tác này?')">
+                            <button type="submit" class="delete-btn text-red-600 hover:text-red-900"
+                                data-confirm="Bạn có chắc chắn muốn xóa đối tác này?">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </form>

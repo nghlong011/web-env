@@ -115,6 +115,9 @@
         });
     </script>
 
+    <!-- Admin AJAX Scripts -->
+    <script src="{{ asset('js/admin-ajax.js') }}"></script>
+
     @stack('scripts')
 </body>
 

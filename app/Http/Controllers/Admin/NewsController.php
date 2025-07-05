@@ -300,6 +300,14 @@ class NewsController extends Controller
             Storage::delete('public/' . $news->image);
         }
         $news->delete();
+        
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Tin tức đã được xóa thành công.'
+            ]);
+        }
+        
         return redirect()->route('admin.news.index')
             ->with('success', 'Tin tức đã được xóa thành công.');
     }

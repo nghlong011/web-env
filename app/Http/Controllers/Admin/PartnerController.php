@@ -130,6 +130,14 @@ class PartnerController extends Controller
             Storage::delete('public' . $partner->logo);
         }
         $partner->delete();
+        
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Đối tác đã được xóa thành công.'
+            ]);
+        }
+        
         return redirect()->route('admin.partners.index')
             ->with('success', 'Đối tác đã được xóa thành công.');
     }

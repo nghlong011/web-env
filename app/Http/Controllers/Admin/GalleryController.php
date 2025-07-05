@@ -237,6 +237,14 @@ class GalleryController extends Controller
             Storage::delete('public' . $gallery->image);
         }
         $gallery->delete();
+        
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Hình ảnh đã được xóa thành công.'
+            ]);
+        }
+        
         return redirect()->route('admin.gallery.index')
             ->with('success', 'Hình ảnh đã được xóa thành công.');
     }
