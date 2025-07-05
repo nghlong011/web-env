@@ -11,6 +11,12 @@ use Illuminate\Support\Facades\File;
 
 class UploadController extends Controller
 {
+    public function __construct()
+    {
+        // Đảm bảo user đã đăng nhập
+        $this->middleware('auth');
+    }
+
     public function uploadImage(Request $request)
     {
         try {
@@ -34,15 +40,24 @@ class UploadController extends Controller
                 
                 if ($path) {
                     // Kiểm tra file có tồn tại không
-                    if (Storage::exists($path)) {
+                    if (Storage::disk('public')->exists('uploads/' . $fileName)) {
                         $url = asset('storage/uploads/' . $fileName);
                         $CKEditorFuncNum = $request->input('CKEditorFuncNum');
-                        $msg = 'Image uploaded successfully';
-                        $response = "<script>window.parent.CKEDITOR.tools.callFunction($CKEditorFuncNum, '$url', '$msg')</script>";
                         
-                        @header('Content-type: text/html; charset=utf-8');
-                        echo $response;
-                        exit;
+                        // Response cho CKEditor
+                        if ($CKEditorFuncNum) {
+                            $msg = 'Image uploaded successfully';
+                            $response = "<script>window.parent.CKEDITOR.tools.callFunction($CKEditorFuncNum, '$url', '$msg')</script>";
+                            
+                            return response($response)->header('Content-Type', 'text/html; charset=utf-8');
+                        }
+                        
+                        // Response cho AJAX upload
+                        return response()->json([
+                            'url' => $url,
+                            'uploaded' => 1,
+                            'fileName' => $fileName
+                        ]);
                     } else {
                         Log::error('File not found after upload', [
                             'path' => $path
@@ -67,6 +82,14 @@ class UploadController extends Controller
             Log::error('Upload error: ' . $e->getMessage(), [
                 'trace' => $e->getTraceAsString()
             ]);
+            
+            $CKEditorFuncNum = $request->input('CKEditorFuncNum');
+            if ($CKEditorFuncNum) {
+                $msg = 'Upload failed: ' . $e->getMessage();
+                $response = "<script>window.parent.CKEDITOR.tools.callFunction($CKEditorFuncNum, '', '$msg')</script>";
+                return response($response)->header('Content-Type', 'text/html; charset=utf-8');
+            }
+            
             return response()->json([
                 'error' => [
                     'message' => $e->getMessage()

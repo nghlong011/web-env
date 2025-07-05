@@ -31,7 +31,11 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('settings/group/{id}', [\App\Http\Controllers\Admin\SettingController::class, 'showGroup'])->name('settings.group');
     Route::resource('settings', \App\Http\Controllers\Admin\SettingController::class)->except(['create', 'store', 'destroy', 'show']);
     Route::resource('contacts', \App\Http\Controllers\Admin\ContactController::class)->only(['index']);
-    Route::post('/upload-image', [App\Http\Controllers\Admin\UploadController::class, 'uploadImage'])->name('upload.image');
+    
+    // Upload route không cần CSRF
+    Route::post('/upload-image', [App\Http\Controllers\Admin\UploadController::class, 'uploadImage'])
+        ->name('upload.image')
+        ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
 });
 
 // Auth routes

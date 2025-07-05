@@ -270,30 +270,31 @@
         ],
         height: 400,
         language: 'vi',
-        filebrowserUploadUrl: '{{ route('admin.upload.image') }}',
-        filebrowserUploadMethod: 'form'
-    });
+                                                 filebrowserUploadUrl: '{{ route('admin.upload.image') }}',
+                 filebrowserUploadMethod: 'form'
+             });
 
-    // CKEditor 4 cho nội dung tiếng Anh
-    CKEDITOR.replace('content_en', {
-        toolbar: [
-            { name: 'document', items: ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-', 'Templates'] },
-            { name: 'clipboard', items: ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo'] },
-            { name: 'editing', items: ['Find', 'Replace', '-', 'SelectAll', '-', 'SpellChecker', 'Scayt'] },
-            '/',
-            { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat'] },
-            { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl'] },
-            { name: 'links', items: ['Link', 'Unlink', 'Anchor'] },
-            { name: 'insert', items: ['Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe'] },
-            '/',
-            { name: 'styles', items: ['Styles', 'Format', 'Font', 'FontSize'] },
-            { name: 'colors', items: ['TextColor', 'BGColor'] },
-            { name: 'tools', items: ['Maximize', 'ShowBlocks'] }
-        ],
-        height: 400,
-        language: 'en',
-        filebrowserUploadUrl: '{{ route('admin.upload.image') }}',
-        filebrowserUploadMethod: 'form'
+             // CKEditor 4 cho nội dung tiếng Anh
+             CKEDITOR.replace('content_en', {
+                 toolbar: [
+                     { name: 'document', items: ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-', 'Templates'] },
+                     { name: 'clipboard', items: ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo'] },
+                     { name: 'editing', items: ['Find', 'Replace', '-', 'SelectAll', '-', 'SpellChecker', 'Scayt'] },
+                     '/',
+                     { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat'] },
+                     { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl'] },
+                     { name: 'links', items: ['Link', 'Unlink', 'Anchor'] },
+                     { name: 'insert', items: ['Image', 'UploadImage', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe'] },
+                     '/',
+                     { name: 'styles', items: ['Styles', 'Format', 'Font', 'FontSize'] },
+                     { name: 'colors', items: ['TextColor', 'BGColor'] },
+                     { name: 'tools', items: ['Maximize', 'ShowBlocks'] }
+                 ],
+                 height: 400,
+                 language: 'en',
+                 extraPlugins: 'customupload',
+                 filebrowserUploadUrl: '{{ route('admin.upload.image') }}',
+                 filebrowserUploadMethod: 'form'
     });
 
     function previewImage(input) {
