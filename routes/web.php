@@ -32,10 +32,12 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::resource('settings', \App\Http\Controllers\Admin\SettingController::class)->except(['create', 'store', 'destroy', 'show']);
     Route::resource('contacts', \App\Http\Controllers\Admin\ContactController::class)->only(['index']);
     
-    // Upload route không cần CSRF
+    // Upload routes không cần CSRF
     Route::post('/upload-image', [App\Http\Controllers\Admin\UploadController::class, 'uploadImage'])
         ->name('upload.image')
         ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+    Route::get('/upload-config', [App\Http\Controllers\Admin\UploadController::class, 'getUploadConfig'])
+        ->name('upload.config');
 });
 
 // Auth routes

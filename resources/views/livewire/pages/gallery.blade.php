@@ -17,6 +17,47 @@
         .glightbox-clean .gnext {
             right: 5vw !important;
         }
+
+        /* CSS cho video trong glightbox */
+        .gslide-video {
+            width: 80vw !important;
+            height: auto !important;
+            max-width: 100vw !important;
+            max-height: 80vh !important;
+        }
+
+        .gslide-video video {
+            width: 100% !important;
+            height: auto !important;
+            max-height: 80vh !important;
+        }
+
+        .gslide-video iframe {
+            width: 100% !important;
+            height: 80vh !important;
+            max-height: 80vh !important;
+        }
+
+        /* CSS cho Plyr player */
+        .plyr {
+            width: 100% !important;
+            height: auto !important;
+            max-height: 80vh !important;
+        }
+
+        .plyr video {
+            width: 100% !important;
+            height: auto !important;
+            max-height: 80vh !important;
+        }
+
+        /* Đảm bảo video container có kích thước phù hợp */
+        .gslide-media {
+            width: 80vw !important;
+            height: auto !important;
+            max-width: 100vw !important;
+            max-height: 80vh !important;
+        }
     </style>
 @endpush
 
@@ -67,28 +108,45 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 xl:gap-12 py-10 xl:py-12">
                         @foreach ($videos as $video)
                             @php
-                                $allowedDomains = [config('app.url'), 'domain2.com', 'domain3.com'];
-                                $isLocalVideo = false;
-                                foreach ($allowedDomains as $domain) {
-                                    if (str_contains($video->video_url, $domain)) {
-                                        $isLocalVideo = true;
-                                        break;
-                                    }
+                                // Kiểm tra xem có phải là video external (YouTube, Vimeo) hay local
+                                $videoUrl = $video->video_url;
+                                $isExternalVideo = false;
+                                
+                                // Kiểm tra nếu là YouTube hoặc Vimeo
+                                if (str_contains($videoUrl, 'youtube.com') || str_contains($videoUrl, 'youtu.be') || str_contains($videoUrl, 'vimeo.com')) {
+                                    $isExternalVideo = true;
                                 }
                             @endphp
                             <div class="flex flex-col items-center">
-                                <a href="{{ asset($video->video_url) }}"
-                                    class="glightbox relative w-full bg-gray-800 overflow-hidden group"
-                                    @if ($isLocalVideo) data-gallery="gallery-video" data-type="video" @else target="_blank" @endif>
-                                    <div class="aspect-[16/9] w-full">
-                                        <img src="{{ asset($video->image) }}" alt="{{ $video->title }}"
-                                            class="object-cover w-full h-full opacity-80 group-hover:scale-110 transition-all duration-300" />
-                                        <span class="absolute inset-0 flex items-center justify-center">
-                                            <img src="{{ asset('images/svg/yellow-play-icon.svg') }}" alt="Play"
-                                                class="w-16 h-16" />
-                                        </span>
-                                    </div>
-                                </a>
+                                @if ($isExternalVideo)
+                                    <a href="{{ $video->video_url }}"
+                                        class="glightbox relative w-full bg-gray-800 overflow-hidden group"
+                                        data-gallery="gallery-video" 
+                                        data-type="video">
+                                        <div class="aspect-[16/9] w-full">
+                                            <img src="{{ asset($video->image) }}" alt="{{ $video->title }}"
+                                                class="object-cover w-full h-full opacity-80 group-hover:scale-110 transition-all duration-300" />
+                                            <span class="absolute inset-0 flex items-center justify-center">
+                                                <img src="{{ asset('images/svg/yellow-play-icon.svg') }}" alt="Play"
+                                                    class="w-16 h-16" />
+                                            </span>
+                                        </div>
+                                    </a>
+                                @else
+                                    <a href="{{ asset($video->video_url) }}"
+                                        class="glightbox relative w-full bg-gray-800 overflow-hidden group"
+                                        data-gallery="gallery-video" 
+                                        data-type="video">
+                                        <div class="aspect-[16/9] w-full">
+                                            <img src="{{ asset($video->image) }}" alt="{{ $video->title }}"
+                                                class="object-cover w-full h-full opacity-80 group-hover:scale-110 transition-all duration-300" />
+                                            <span class="absolute inset-0 flex items-center justify-center">
+                                                <img src="{{ asset('images/svg/yellow-play-icon.svg') }}" alt="Play"
+                                                    class="w-16 h-16" />
+                                            </span>
+                                        </div>
+                                    </a>
+                                @endif
                                 <div class="mt-4 text-center font-bold text-lg text-[#529949]">
                                     <span class="text-xl">{{ $video->translation->title }}</span>
                                 </div>

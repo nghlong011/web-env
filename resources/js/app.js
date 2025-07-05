@@ -4,7 +4,12 @@ import "glightbox/dist/css/glightbox.min.css";
 import Alpine from "alpinejs";
 
 document.addEventListener("DOMContentLoaded", function () {
-    GLightbox({ selector: ".glightbox" });
+    GLightbox({
+        selector: ".glightbox",
+        touchNavigation: true,
+        loop: true,
+        autoplayVideos: true
+    });
 });
 
 window.Alpine = Alpine;

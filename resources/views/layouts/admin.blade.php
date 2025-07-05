@@ -20,70 +20,7 @@
 
     <!-- CKEditor 4 -->
     <script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
-
-    <script>
-        // Custom Upload Adapter cho CKEditor 4
-        CKEDITOR.plugins.add('customupload', {
-            init: function(editor) {
-                // Tạo custom upload adapter
-                editor.addCommand('uploadimage', {
-                    exec: function(editor) {
-                        var input = document.createElement('input');
-                        input.type = 'file';
-                        input.accept = 'image/*';
-                        input.onchange = function() {
-                            var file = this.files[0];
-                            if (file) {
-                                var formData = new FormData();
-                                formData.append('upload', file);
-
-                                var xhr = new XMLHttpRequest();
-                                xhr.open('POST', '{{ route('admin.upload.image') }}', true);
-                                xhr.onload = function() {
-                                    if (xhr.status === 200) {
-                                        try {
-                                            var response = JSON.parse(xhr.responseText);
-                                            if (response.url) {
-                                                editor.insertHtml('<img src="' + response.url + '" alt="' + file.name + '" style="max-width:100%;">');
-                                            }
-                                        } catch (e) {
-                                            // Nếu response là HTML (CKEditor response)
-                                            if (xhr.responseText.includes('CKEDITOR.tools.callFunction')) {
-                                                // Response đã được xử lý bởi CKEditor
-                                                return;
-                                            }
-                                        }
-                                    } else {
-                                        console.error('Upload failed:', xhr.status, xhr.responseText);
-                                    }
-                                };
-                                xhr.onerror = function() {
-                                    console.error('Upload error');
-                                };
-                                xhr.send(formData);
-                            }
-                        };
-                        input.click();
-                    }
-                });
-
-                editor.ui.addButton('UploadImage', {
-                    label: 'Upload Image',
-                    command: 'uploadimage',
-                    toolbar: 'insert'
-                });
-            }
-        });
-
-        // Cấu hình CKEditor 4 cho file upload
-        CKEDITOR.editorConfig = function(config) {
-            config.extraAllowedContent = 'img[width,height,align]';
-            
-            // Sử dụng custom upload adapter
-            config.filebrowserUploadUrl = '{{ route('admin.upload.image') }}';
-            config.filebrowserUploadMethod = 'form';
-        };
-    </script>
+    <script src="{{ asset('js/ckeditor-upload.js') }}"></script>
     <style>
         .cke_editor {
             min-height: 300px;

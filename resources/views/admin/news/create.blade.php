@@ -292,7 +292,10 @@
                 language: 'vi',
                 extraPlugins: 'customupload',
                 filebrowserUploadUrl: '{{ route('admin.upload.image') }}',
-                filebrowserUploadMethod: 'form'
+                filebrowserUploadMethod: 'xhr',
+                allowedContent: true,
+                extraAllowedContent: 'img[width,height,align,style]',
+                removePlugins: 'elementspath,resize'
             });
 
             // CKEditor 4 cho nội dung tiếng Anh
@@ -315,7 +318,10 @@
                 language: 'en',
                 extraPlugins: 'customupload',
                 filebrowserUploadUrl: '{{ route('admin.upload.image') }}',
-                filebrowserUploadMethod: 'form'
+                filebrowserUploadMethod: 'xhr',
+                allowedContent: true,
+                extraAllowedContent: 'img[width,height,align,style]',
+                removePlugins: 'elementspath,resize'
             });
 
             function previewImage(input) {
