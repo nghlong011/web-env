@@ -23,6 +23,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
     Route::resource('news', \App\Http\Controllers\Admin\NewsController::class);
+    Route::post('/news/{news}/quick-update', [\App\Http\Controllers\Admin\NewsController::class, 'quickUpdate'])->name('news.quick-update');
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->only(['index']);
     Route::put('/users/update-password', [\App\Http\Controllers\Admin\UserController::class, 'updatePassword'])->name('users.update-password');
     Route::resource('partners', \App\Http\Controllers\Admin\PartnerController::class);

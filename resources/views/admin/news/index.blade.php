@@ -66,7 +66,9 @@
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hình ảnh</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tiêu đề</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thứ tự</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Danh mục</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày đăng</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
@@ -77,13 +79,28 @@
                 @foreach($news as $item)
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap">
+                        @if($item->image)
+                            <img src="{{ asset($item->image) }}" alt="{{ $item->translations->where('locale', app()->getLocale())->first()->title ?? $item->translations->first()->title }}" 
+                                 class="h-16 w-16 object-cover rounded-lg shadow-sm">
+                        @else
+                            <div class="h-16 w-16 bg-gray-200 rounded-lg flex items-center justify-center">
+                                <svg class="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                        @endif
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm font-medium text-gray-900">{{ $item->translations->where('locale', app()->getLocale())->first()->title ?? $item->translations->first()->title }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <input type="number" class="quick-edit-order w-20 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500" value="{{ $item->order }}" data-id="{{ $item->id }}" data-original="{{ $item->order }}">
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm text-gray-900">{{ __('new.category.' . $item->category) }}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">{{ $item->date->format('d/m/Y') }}</div>
+                        <input type="date" class="quick-edit-date px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500" value="{{ $item->date->format('Y-m-d') }}" data-id="{{ $item->id }}" data-original="{{ $item->date->format('Y-m-d') }}">
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $item->status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
@@ -109,4 +126,79 @@
         {{ $news->links() }}
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Xử lý quick edit cho order
+    document.querySelectorAll('.quick-edit-order').forEach(function(input) {
+        input.addEventListener('change', function() {
+            saveQuickEdit(input, 'order');
+        });
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                saveQuickEdit(input, 'order');
+                input.blur();
+            } else if (e.key === 'Escape') {
+                input.value = input.dataset.original;
+                input.blur();
+            }
+        });
+    });
+    // Xử lý quick edit cho date
+    document.querySelectorAll('.quick-edit-date').forEach(function(input) {
+        input.addEventListener('change', function() {
+            saveQuickEdit(input, 'date');
+        });
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                saveQuickEdit(input, 'date');
+                input.blur();
+            } else if (e.key === 'Escape') {
+                input.value = input.dataset.original;
+                input.blur();
+            }
+        });
+    });
+    function saveQuickEdit(input, field) {
+        const id = input.dataset.id;
+        const value = input.value;
+        const original = input.dataset.original;
+        if (value === original) return;
+        fetch(`/admin/news/${id}/quick-update`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({
+                field: field,
+                value: value
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                input.dataset.original = value;
+                showNotification('Cập nhật thành công!', 'success');
+            } else {
+                showNotification('Có lỗi xảy ra!', 'error');
+            }
+        })
+        .catch(error => {
+            showNotification('Có lỗi xảy ra!', 'error');
+        });
+    }
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg text-white z-50 ${
+            type === 'success' ? 'bg-green-500' : 'bg-red-500'
+        }`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+});
+</script>
 @endsection 

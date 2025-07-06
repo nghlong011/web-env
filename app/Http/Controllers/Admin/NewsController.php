@@ -311,4 +311,33 @@ class NewsController extends Controller
         return redirect()->route('admin.news.index')
             ->with('success', 'Tin tức đã được xóa thành công.');
     }
+
+    public function quickUpdate(Request $request, News $news)
+    {
+        $request->validate([
+            'field' => 'required|in:order,date',
+            'value' => 'required'
+        ]);
+
+        try {
+            $field = $request->field;
+            $value = $request->value;
+
+            if ($field === 'order') {
+                $news->update(['order' => (int)$value]);
+            } elseif ($field === 'date') {
+                $news->update(['date' => $value]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật thành công!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 } 
