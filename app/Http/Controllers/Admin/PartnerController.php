@@ -13,9 +13,7 @@ class PartnerController extends Controller
 
     public function index()
     {
-        $partners = Partner::with(['translations' => function($query) {
-            $query->where('locale', app()->getLocale());
-        }])->orderBy('sort_order', 'asc')->get();
+        $partners = Partner::orderBy('sort_order', 'asc')->get();
         return view('admin.partners.index', compact('partners'));
     }
 
@@ -31,10 +29,14 @@ class PartnerController extends Controller
             'logo.image' => 'Vui lòng chọn file ảnh.',
             'logo.mimes' => 'File ảnh phải có định dạng jpeg, png, jpg, gif.',
             'logo.max' => 'File ảnh không được vượt quá 2MB.',
+            'sort_order.required' => 'Vui lòng nhập thứ tự.',
+            'sort_order.integer' => 'Thứ tự phải là số nguyên.',
+            'sort_order.min' => 'Thứ tự phải lớn hơn hoặc bằng 0.',
         ];
 
         $request->validate([
             'logo' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'sort_order' => 'required|integer|min:0',
         ], $messages);
 
         // Xử lý upload logo
@@ -50,15 +52,7 @@ class PartnerController extends Controller
         $partner = Partner::create([
             'logo' => $logoPath,
             'status' => $request->status ?? 1,
-            'sort_order' => $request->sort_order ?? Partner::max('sort_order') + 1
-        ]);
-
-        // Tạo translation cho đối tác
-        $partner->translations()->create([
-            'locale' => app()->getLocale(),
-            'name' => $request->name ?? null,
-            'description' => $request->description ?? null,
-            'website' => $request->website ?? null
+            'sort_order' => $request->sort_order
         ]);
 
         return redirect()->route('admin.partners.index')
@@ -67,9 +61,6 @@ class PartnerController extends Controller
 
     public function edit(Partner $partner)
     {
-        $partner->load(['translations' => function($query) {
-            $query->where('locale', app()->getLocale());
-        }]);
         return view('admin.partners.edit', compact('partner'));
     }
 
@@ -79,34 +70,21 @@ class PartnerController extends Controller
             'logo.image' => 'Vui lòng chọn file ảnh.',
             'logo.mimes' => 'File ảnh phải có định dạng jpeg, png, jpg, gif.',
             'logo.max' => 'File ảnh không được vượt quá 2MB.',
+            'sort_order.required' => 'Vui lòng nhập thứ tự.',
+            'sort_order.integer' => 'Thứ tự phải là số nguyên.',
+            'sort_order.min' => 'Thứ tự phải lớn hơn hoặc bằng 0.',
         ];
 
         $request->validate([
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'sort_order' => 'required|integer|min:0',
         ], $messages);
 
         // Cập nhật thông tin đối tác
         $partner->update([
             'status' => $request->status ?? 1,
-            'sort_order' => $request->sort_order ?? $partner->sort_order
+            'sort_order' => $request->sort_order
         ]);
-
-        // Cập nhật hoặc tạo translation
-        $translation = $partner->translations()->where('locale', app()->getLocale())->first();
-        if ($translation) {
-            $translation->update([
-                'name' => $request->name ?? null,
-                'description' => $request->description ?? null,
-                'website' => $request->website ?? null
-            ]);
-        } else {
-            $partner->translations()->create([
-                'locale' => app()->getLocale(),
-                'name' => $request->name ?? null,
-                'description' => $request->description ?? null,
-                'website' => $request->website ?? null
-            ]);
-        }
 
         // Xử lý upload logo mới nếu có
         if ($request->hasFile('logo')) {

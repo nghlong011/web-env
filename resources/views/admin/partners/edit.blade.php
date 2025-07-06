@@ -19,29 +19,11 @@
                 <h2 class="text-lg font-medium text-gray-900 mb-4">Thông tin đối tác</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Tên đối tác</label>
-                        <input type="text" name="name" id="name" value="{{ old('name', $partner->translation()?->name) }}"
+                        <label for="sort_order" class="block text-sm font-medium text-gray-700 mb-2">Thứ tự</label>
+                        <input type="number" name="sort_order" id="sort_order" value="{{ old('sort_order', $partner->sort_order) }}"
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#E6D1A2]"
                             required>
-                        @error('name')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Mô tả</label>
-                        <textarea name="description" id="description" rows="3"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#E6D1A2]">{{ old('description', $partner->translation()?->description) }}</textarea>
-                        @error('description')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="website" class="block text-sm font-medium text-gray-700 mb-2">Website</label>
-                        <input type="url" name="website" id="website" value="{{ old('website', $partner->translation()?->website) }}"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#E6D1A2]">
-                        @error('website')
+                        @error('sort_order')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
@@ -49,7 +31,7 @@
                     <div>
                         <label for="logo" class="block text-sm font-medium text-gray-700 mb-2">Logo</label>
                         @if ($partner->logo)
-                        <img src="{{ asset($partner->logo) }}" alt="{{ $partner->translation()?->name ?? 'Partner' }}"
+                        <img src="{{ asset($partner->logo) }}" alt="Partner Logo"
                             class="h-32 w-32 object-contain mb-2">
                         @endif
                         <input type="file" name="logo" id="logo" accept="image/*"
