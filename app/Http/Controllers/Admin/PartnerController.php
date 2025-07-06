@@ -141,4 +141,18 @@ class PartnerController extends Controller
         return redirect()->route('admin.partners.index')
             ->with('success', 'Đối tác đã được xóa thành công.');
     }
+
+    public function updateOrder(Request $request, Partner $partner)
+    {
+        $request->validate([
+            'sort_order' => 'required|integer|min:0'
+        ]);
+
+        $partner->update(['sort_order' => $request->sort_order]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Cập nhật thứ tự thành công.'
+        ]);
+    }
 }

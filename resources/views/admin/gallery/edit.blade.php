@@ -37,12 +37,14 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Video</label>
                     <div class="flex space-x-4 mb-2">
                         <label class="inline-flex items-center">
-                            <input type="radio" name="video_type" value="upload" {{ old('video_type', $gallery->video_type) == 'upload' ? 'checked' : '' }}
+                            <input type="radio" name="video_type" value="upload"
+                                {{ old('video_type', ($gallery->video_url && filter_var($gallery->video_url, FILTER_VALIDATE_URL)) ? 'url' : 'upload') == 'upload' ? 'checked' : '' }}
                                 onchange="toggleVideoInput()" class="form-radio">
                             <span class="ml-2">Upload video</span>
                         </label>
                         <label class="inline-flex items-center">
-                            <input type="radio" name="video_type" value="url" {{ old('video_type', $gallery->video_type) == 'url' ? 'checked' : '' }}
+                            <input type="radio" name="video_type" value="url"
+                                {{ old('video_type', ($gallery->video_url && filter_var($gallery->video_url, FILTER_VALIDATE_URL)) ? 'url' : 'upload') == 'url' ? 'checked' : '' }}
                                 onchange="toggleVideoInput()" class="form-radio">
                             <span class="ml-2">Gắn link</span>
                         </label>
@@ -193,13 +195,13 @@
         document.getElementById('video-url-input').classList.toggle('hidden', type !== 'url');
 
         if (type === 'upload') {
-            urlInput.value = '';
+            // Chỉ xóa URL khi chuyển sang upload, không xóa file input
             urlInput.removeAttribute('required');
             urlInput.setAttribute('disabled', 'disabled');
             fileInput.removeAttribute('disabled');
             fileInput.setAttribute('required', 'required');
         } else {
-            fileInput.value = '';
+            // Chỉ xóa file input khi chuyển sang URL, không xóa URL
             fileInput.removeAttribute('required');
             fileInput.setAttribute('disabled', 'disabled');
             urlInput.removeAttribute('disabled');
@@ -215,12 +217,9 @@
         const videoUrlInput = document.querySelector('input[name="video_url"]');
         const documentFileInput = document.querySelector('input[name="document_file"]');
         
-        // Ẩn tất cả các phần và reset các input
+        // Ẩn tất cả các phần
         videoSection.classList.add('hidden');
         documentSection.classList.add('hidden');
-        videoFileInput.value = '';
-        videoUrlInput.value = '';
-        documentFileInput.value = '';
         
         // Reset trạng thái của các input
         videoFileInput.removeAttribute('required');
@@ -237,10 +236,13 @@
         } else if (this.value === '3') { // Tài liệu
             documentSection.classList.remove('hidden');
             documentFileInput.setAttribute('required', 'required');
-            // Ẩn và xóa giá trị video_url
-            document.getElementById('video-url-input').classList.add('hidden');
+            // Chỉ xóa video URL khi chuyển sang category khác
+            videoFileInput.value = '';
             videoUrlInput.value = '';
         } else {
+            // Chỉ xóa video URL khi chuyển sang category khác
+            videoFileInput.value = '';
+            videoUrlInput.value = '';
             document.getElementById('video-url-input').classList.remove('hidden');
         }
     });
@@ -250,6 +252,14 @@
         const category = document.querySelector('select[name="category"]').value;
         if (category === '2') {
             toggleVideoInput();
+        }
+        
+        // Kiểm tra giá trị cũ khi form được redirect lại sau lỗi
+        const oldCategory = '{{ old("category") }}';
+        if (oldCategory && oldCategory !== category) {
+            // Nếu có giá trị cũ và khác với giá trị hiện tại, trigger change event
+            const event = new Event('change');
+            document.querySelector('select[name="category"]').dispatchEvent(event);
         }
     });
 </script>

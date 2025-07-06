@@ -126,4 +126,18 @@ class BannerController extends Controller
         return redirect()->route('admin.banners.index')
             ->with('success', 'Banner đã được xóa thành công.');
     }
+
+    public function updateOrder(Request $request, Banner $banner)
+    {
+        $request->validate([
+            'order' => 'required|integer|min:0'
+        ]);
+
+        $banner->update(['order' => $request->order]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Cập nhật thứ tự thành công.'
+        ]);
+    }
 } 

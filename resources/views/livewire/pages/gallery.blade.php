@@ -89,7 +89,7 @@
                         @foreach ($images as $image)
                             <div class="flex flex-col items-center">
                                 <a href="{{ asset($image->image) }}" class="glightbox overflow-hidden w-full"
-                                    data-gallery="gallery1">
+                                    data-gallery="gallery-image">
                                     <div class="aspect-[16/9] w-full">
                                         <img src="{{ asset($image->image) }}" alt="{{ $image->title }}"
                                             class="shadow-lg cursor-pointer hover:scale-110 w-full h-full object-cover transition-all duration-300" />
@@ -181,3 +181,84 @@
         </div>
     </section>
 </div>
+
+<script>
+// Hàm khởi tạo GLightbox với kiểm tra
+function initGLightbox() {
+    // Kiểm tra xem GLightbox đã được load chưa
+    if (typeof GLightbox === 'undefined') {
+        console.log('GLightbox not loaded yet, retrying in 100ms...');
+        setTimeout(initGLightbox, 100);
+        return;
+    }
+    
+    // Hủy lightbox cũ nếu có
+    if (window.glightboxGallery) {
+        window.glightboxGallery.destroy();
+    }
+    
+    // Đợi DOM cập nhật
+    setTimeout(() => {
+        try {
+            window.glightboxGallery = GLightbox({ 
+                selector: '.glightbox',
+                onOpen: () => {
+                    setTimeout(() => {
+                        const activeElement = document.activeElement;
+                        if (activeElement && activeElement.classList.contains('glightbox')) {
+                            activeElement.blur();
+                        }
+                    }, 100);
+                }
+            });
+            console.log('GLightbox initialized with', document.querySelectorAll('.glightbox').length, 'elements');
+        } catch (error) {
+            console.error('Error initializing GLightbox:', error);
+        }
+    }, 100);
+}
+
+// Đợi Livewire và GLightbox đều sẵn sàng
+function waitForLivewireAndGLightbox() {
+    if (typeof Livewire !== 'undefined' && typeof GLightbox !== 'undefined') {
+        // Khởi tạo GLightbox lần đầu
+        initGLightbox();
+        
+        // Lắng nghe sự kiện cập nhật của Livewire
+        Livewire.hook('message.processed', (message, component) => {
+            console.log('Livewire message processed, reinitializing GLightbox');
+            initGLightbox();
+        });
+        
+        // Lắng nghe sự kiện navigate của Livewire
+        Livewire.hook('navigate', () => {
+            console.log('Livewire navigate, reinitializing GLightbox');
+            initGLightbox();
+        });
+    } else {
+        // Nếu chưa sẵn sàng, thử lại sau 100ms
+        setTimeout(waitForLivewireAndGLightbox, 100);
+    }
+}
+
+// Bắt đầu khi DOM load
+document.addEventListener('DOMContentLoaded', waitForLivewireAndGLightbox);
+
+// Lắng nghe sự kiện click trên các nút phân trang
+document.addEventListener('click', function(e) {
+    // Kiểm tra nếu click vào nút phân trang
+    if (e.target && (
+        e.target.matches('button[wire\\:click*="previousPage"]') ||
+        e.target.matches('button[wire\\:click*="nextPage"]') ||
+        e.target.matches('button[wire\\:click*="gotoPage"]')
+    )) {
+        console.log('Pagination button clicked, will reinitialize GLightbox after update');
+        // Đợi Livewire cập nhật xong rồi khởi tạo lại
+        setTimeout(() => {
+            initGLightbox();
+        }, 300);
+    }
+});
+</script>
+
+

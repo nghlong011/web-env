@@ -26,8 +26,11 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->only(['index']);
     Route::put('/users/update-password', [\App\Http\Controllers\Admin\UserController::class, 'updatePassword'])->name('users.update-password');
     Route::resource('partners', \App\Http\Controllers\Admin\PartnerController::class);
+    Route::put('/partners/{partner}/order', [\App\Http\Controllers\Admin\PartnerController::class, 'updateOrder'])->name('partners.update-order');
     Route::resource('banners', \App\Http\Controllers\Admin\BannerController::class);
+    Route::put('/banners/{banner}/order', [\App\Http\Controllers\Admin\BannerController::class, 'updateOrder'])->name('banners.update-order');
     Route::resource('gallery', \App\Http\Controllers\Admin\GalleryController::class);
+    Route::put('/gallery/{gallery}/order', [\App\Http\Controllers\Admin\GalleryController::class, 'updateOrder'])->name('gallery.update-order');
     Route::get('settings/group/{id}', [\App\Http\Controllers\Admin\SettingController::class, 'showGroup'])->name('settings.group');
     Route::resource('settings', \App\Http\Controllers\Admin\SettingController::class)->except(['create', 'store', 'destroy', 'show']);
     Route::resource('contacts', \App\Http\Controllers\Admin\ContactController::class)->only(['index']);

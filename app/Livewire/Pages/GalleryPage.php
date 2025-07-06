@@ -31,16 +31,22 @@ class GalleryPage extends Component
             ->with(['translations' => function($query) {
                 $query->where('locale', app()->getLocale());
             }])
+            ->orderBy('order', 'asc')
+            ->orderBy('created_at', 'desc')
             ->paginate(9);
         $videos = Gallery::where('category', '2')
             ->with(['translations' => function($query) {
                 $query->where('locale', app()->getLocale());
             }])
+            ->orderBy('order', 'asc')
+            ->orderBy('created_at', 'desc')
             ->paginate(9);
         $documents = Gallery::where('category', '3')
             ->with(['translations' => function($query) {
                 $query->where('locale', app()->getLocale());
             }])
+            ->orderBy('order', 'asc')
+            ->orderBy('created_at', 'desc')
             ->paginate(9);
 
         return view('livewire.pages.gallery', [

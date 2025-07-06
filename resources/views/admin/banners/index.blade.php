@@ -42,7 +42,12 @@
                         <div class="text-sm text-gray-900">{{ $banner->link }}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">{{ $banner->order }}</div>
+                        <input type="number" 
+                            value="{{ $banner->order }}" 
+                            min="0"
+                            class="order-input w-16 px-2 py-1 border border-gray-300 rounded text-center text-sm"
+                            data-banner-id="{{ $banner->id }}"
+                            data-original-value="{{ $banner->order }}">
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <span
@@ -70,4 +75,69 @@
         </table>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const orderInputs = document.querySelectorAll('.order-input');
+    
+    orderInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            const bannerId = this.dataset.bannerId;
+            const newOrder = this.value;
+            const originalValue = this.dataset.originalValue;
+            
+            // Nếu giá trị không thay đổi, không làm gì
+            if (newOrder === originalValue) {
+                return;
+            }
+            
+            // Gửi request cập nhật
+            fetch(`/admin/banners/${bannerId}/order`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    order: newOrder
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Cập nhật giá trị gốc
+                    this.dataset.originalValue = newOrder;
+                    
+                    // Hiển thị thông báo thành công
+                    showNotification('Cập nhật thứ tự thành công!', 'success');
+                } else {
+                    // Khôi phục giá trị cũ nếu có lỗi
+                    this.value = originalValue;
+                    showNotification('Có lỗi xảy ra khi cập nhật thứ tự!', 'error');
+                }
+            })
+            .catch(error => {
+                // Khôi phục giá trị cũ nếu có lỗi
+                this.value = originalValue;
+                showNotification('Có lỗi xảy ra khi cập nhật thứ tự!', 'error');
+                console.error('Error:', error);
+            });
+        });
+    });
+    
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg text-white z-50 ${
+            type === 'success' ? 'bg-green-500' : 'bg-red-500'
+        }`;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+});
+</script>
 @endsection 

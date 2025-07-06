@@ -21,7 +21,12 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                return redirect(RouteServiceProvider::HOME);
+                // Nếu user là admin, redirect về trang admin
+                if (Auth::user()->is_admin) {
+                    return redirect()->route('admin.dashboard');
+                }
+                // Nếu không phải admin, redirect về trang chủ
+                return redirect('/');
             }
         }
 

@@ -183,11 +183,9 @@
         document.getElementById('video-url-input').classList.toggle('hidden', type !== 'url');
 
         if (type === 'upload') {
-            urlInput.value = '';
             urlInput.disabled = true;
             fileInput.disabled = false;
         } else {
-            fileInput.value = '';
             fileInput.disabled = true;
             urlInput.disabled = false;
         }
@@ -208,6 +206,20 @@
             toggleVideoInput();
         } else if (this.value === '3') { // Tài liệu
             documentSection.classList.remove('hidden');
+        }
+    });
+
+    // Kiểm tra giá trị cũ khi trang load để hiển thị input tương ứng
+    document.addEventListener('DOMContentLoaded', function() {
+        const categorySelect = document.querySelector('select[name="category"]');
+        const oldCategory = '{{ old("category") }}';
+        
+        if (oldCategory) {
+            categorySelect.value = oldCategory;
+            
+            // Trigger change event để hiển thị input tương ứng
+            const event = new Event('change');
+            categorySelect.dispatchEvent(event);
         }
     });
 </script>

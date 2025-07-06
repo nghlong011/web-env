@@ -248,4 +248,18 @@ class GalleryController extends Controller
         return redirect()->route('admin.gallery.index')
             ->with('success', 'Hình ảnh đã được xóa thành công.');
     }
+
+    public function updateOrder(Request $request, Gallery $gallery)
+    {
+        $request->validate([
+            'order' => 'required|integer|min:0'
+        ]);
+
+        $gallery->update(['order' => $request->order]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Cập nhật thứ tự thành công.'
+        ]);
+    }
 } 

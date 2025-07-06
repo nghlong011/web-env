@@ -92,7 +92,12 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            {{ $gallery->order }}
+                            <input type="number" 
+                                value="{{ $gallery->order }}" 
+                                min="0"
+                                class="order-input w-16 px-2 py-1 border border-gray-300 rounded text-center text-sm"
+                                data-gallery-id="{{ $gallery->id }}"
+                                data-original-value="{{ $gallery->order }}">
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $gallery->status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
@@ -118,4 +123,71 @@
         {{ $galleries->links() }}
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const orderInputs = document.querySelectorAll('.order-input');
+    
+    orderInputs.forEach(input => {
+        let timeout;
+        
+        input.addEventListener('change', function() {
+            const galleryId = this.dataset.galleryId;
+            const newOrder = this.value;
+            const originalValue = this.dataset.originalValue;
+            
+            // Nếu giá trị không thay đổi, không làm gì
+            if (newOrder === originalValue) {
+                return;
+            }
+            
+            // Gửi request cập nhật
+            fetch(`/admin/gallery/${galleryId}/order`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    order: newOrder
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Cập nhật giá trị gốc
+                    this.dataset.originalValue = newOrder;
+                    
+                    // Hiển thị thông báo thành công
+                    showNotification('Cập nhật thứ tự thành công!', 'success');
+                } else {
+                    // Khôi phục giá trị cũ nếu có lỗi
+                    this.value = originalValue;
+                    showNotification('Có lỗi xảy ra khi cập nhật thứ tự!', 'error');
+                }
+            })
+            .catch(error => {
+                // Khôi phục giá trị cũ nếu có lỗi
+                this.value = originalValue;
+                showNotification('Có lỗi xảy ra khi cập nhật thứ tự!', 'error');
+                console.error('Error:', error);
+            });
+        });
+    });
+    
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg text-white z-50 ${
+            type === 'success' ? 'bg-green-500' : 'bg-red-500'
+        }`;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+});
+</script>
 @endsection 
