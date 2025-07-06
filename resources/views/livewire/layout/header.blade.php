@@ -29,7 +29,7 @@
                                     @php
                                         $emailTranslation = $email->translation(app()->getLocale()) ?? $email->translation('vi');
                                     @endphp
-                                    {{ $emailTranslation ? $emailTranslation->description : 'info@duanvesinhmoitruong.com' }}
+                                    {!! $emailTranslation ? $emailTranslation->description : 'info@duanvesinhmoitruong.com' !!}
                                 @else
                                     info@duanvesinhmoitruong.com
                                 @endif
@@ -44,7 +44,7 @@
                                     @php
                                         $phoneTranslation = $phone->translation(app()->getLocale()) ?? $phone->translation('vi');
                                     @endphp
-                                    {{ $phoneTranslation ? $phoneTranslation->description : '0909 999 999' }}
+                                    {!! $phoneTranslation ? $phoneTranslation->description : '0909 999 999' !!}
                                 @else
                                     0909 999 999
                                 @endif

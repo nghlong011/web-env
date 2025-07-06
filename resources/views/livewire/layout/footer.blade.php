@@ -138,10 +138,12 @@
                             </button>
                         </div>
                     </form>
-                    <div class="h-4">
-                        @error('email_subscribe') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                        @if ($successMessage) <span class="text-green-500 text-xs">{{ $successMessage }}</span> @endif
-                    </div>
+                    @if ($errors->has('email_subscribe') || $successMessage)
+                        <div class="h-4">
+                            @error('email_subscribe') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                            @if ($successMessage) <span class="text-green-500 text-xs">{{ $successMessage }}</span> @endif
+                        </div>
+                    @endif
                     <div class="flex items-center gap-4">
                         <a href="{{ $facebook?->translation(app()->getLocale())?->description }}" class="hover:opacity-80 transition duration-300">
                             <div class="bg-black rounded-full w-5 h-5 flex items-center justify-center">

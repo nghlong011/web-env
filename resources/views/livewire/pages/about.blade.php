@@ -16,7 +16,7 @@
                     </div>
                 </div>
 
-                <div class="flex justify-end relative mt-6 md:mt-0 xl:w-auto xl:pl-7 lg:col-span-1 transition-all duration-2000 ease-out transform translate-x-1/2 opacity-0 invisible"
+                <div class="flex justify-end relative mt-6 md:mt-0 xl:w-auto lg:col-span-1 transition-all duration-2000 ease-out transform translate-x-1/2 opacity-0 invisible"
                     id="intro-image">
                     <img src="{{ asset('storage/images/hand-earth.png') }}" alt="hand-earth"
                         class="w-full h-auto rounded-tl-[100px] rounded-br-[100px] 
@@ -28,7 +28,7 @@
     </div>
     <div id="du-an-vsmt" class="container-fluid bg-white overflow-hidden">
         <div class="container mx-auto px-4 py-6 md:py-8 lg:py-12 xl:py-25 xl:px-20 2xl:py-30 2xl:px-24">
-            <div class="grid grid-cols-1 lg:grid-cols-2 md:gap-10 2xl:gap-12 xl:pl-7 items-center justify-between">
+            <div class="grid grid-cols-1 lg:grid-cols-2 md:gap-10 2xl:gap-12 items-center justify-between">
                 <div class="text-center lg:order-2 lg:text-left lg:col-span-1" id="intro-text-2">
                     <h1
                         class="text-[20px] lg:text-[25px] xl:text-[30px] 2xl:text-[35px] font-semibold mb-2 md:mb-2 2xl:mb-6 uppercase">
@@ -56,7 +56,7 @@
                         {!! $meaning?->translation(app()->getLocale())?->description !!}
                     </div>
                 </div>
-                <div class="flex justify-end relative mt-6 md:mt-0 xl:w-auto xl:pl-7 lg:col-span-1" id="intro-image-3">
+                <div class="flex justify-end relative mt-6 md:mt-0 xl:w-auto lg:col-span-1" id="intro-image-3">
                     <img src="{{ asset('images/about-img-1.svg') }}" alt="hand-earth" class="w-full h-auto">
                 </div>
             </div>
